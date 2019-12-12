@@ -7,8 +7,7 @@ public class Exercise {
 
     public Exercise() {    }
 
-    public Exercise(int id, String title, String description) {
-        this.id = id;
+    public Exercise(String title, String description) {
         this.title = title;
         this.description = description;
     }
@@ -35,5 +34,14 @@ public class Exercise {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    @Override
+    public String toString() {
+        return "Exercise{" +
+                "id=" + id +
+                ", title='" + title + '\'' +
+                ", description='" + description + '\'' +
+                '}';
     }
 }

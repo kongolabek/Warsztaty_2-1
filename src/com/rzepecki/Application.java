@@ -4,9 +4,13 @@
  */
 package com.rzepecki;
 
+import com.rzepecki.dao.ExcerciseDAO;
 import com.rzepecki.dao.GroupDAO;
+import com.rzepecki.dao.SolutionDAO;
 import com.rzepecki.dao.UserDAO;
+import com.rzepecki.model.Exercise;
 import com.rzepecki.model.Group;
+import com.rzepecki.model.Solution;
 import com.rzepecki.model.User;
 
 import javax.mail.internet.AddressException;
@@ -19,7 +23,207 @@ public class Application {
     public static void main(String[] args) {
 
         userApp();
+        exerciseApp();
+        groupApp();
+        solutionApp();
 
+    }
+
+    private static void solutionApp() {
+        UserDAO userDAO = new UserDAO();
+        SolutionDAO solutionDAO = new SolutionDAO();
+        ExcerciseDAO excerciseDAO = new ExcerciseDAO();
+        Scanner scanner= new Scanner(System.in);
+        while(true){
+            //pobranie wszystkich group_id
+            ArrayList userIList = getUserId(userDAO);
+            //pobranie wszystkich zadań
+            ArrayList exerciseIDList = getExerciseId(excerciseDAO);
+
+            System.out.println("\nChoose one of the options below:");
+            System.out.println("add\n" +
+                    "view\n" +
+                    "quit");
+
+            System.out.print("\n-->");
+            String sc = scanner.nextLine();
+
+            if(sc.equalsIgnoreCase("add")){
+                addFunctionSolution(solutionDAO, userIList, exerciseIDList, userDAO, excerciseDAO);
+            }else if (sc.equalsIgnoreCase("view")){
+                viewFunctionSolution(solutionDAO, userIList);
+            }else if (sc.equalsIgnoreCase("quit")){
+                System.out.println("exit");
+                break;
+            }else{
+                System.out.println("WARNING: incorrect option, choose one more time");
+            }
+
+        }
+    }
+    private static void addFunctionSolution(SolutionDAO solutionDAO, ArrayList userIList, ArrayList exerciseIDList, UserDAO userDAO, ExcerciseDAO excerciseDAO){
+        System.out.println("Users list:");
+        for (User user: userDAO.findAll()) {
+            System.out.println(user.printToString());
+        }
+        int userId = scannerInt("user", userIList);
+        System.out.println("Exercise list:");
+        for (Exercise exercise: excerciseDAO.findAll()) {
+            System.out.println(exercise.toString());
+        }
+        int exerciseId = scannerInt("exercise", exerciseIDList);
+        Solution solution = new Solution(exerciseId, userId);
+        solutionDAO.create(solution);
+        System.out.println("Solution created");
+        System.out.println("-----------------------------");
+    }
+
+    private static void viewFunctionSolution(SolutionDAO solutionDAO, ArrayList userIList) {
+        int userId = scannerInt("user", userIList);
+
+        ArrayList<Solution> list = solutionDAO.findAllByUserId(userId);
+        System.out.println("Solution");
+        for(Solution solution:list){
+            System.out.println(solution.toString());
+        }
+        System.out.println("-----------------------------");
+    }
+
+    private static void groupApp() {
+        GroupDAO groupDAO = new GroupDAO();
+        Scanner scanner= new Scanner(System.in);
+        while(true){
+            System.out.println("Group list:");
+            for (Group group: groupDAO.findAll()) {
+                System.out.println(group.toString());
+            }
+            //pobranie wszystkich group_id
+            ArrayList groupIdList = getGroupId(groupDAO);
+
+            System.out.println("\nChoose one of the options below:");
+            System.out.println("add\n" +
+                    "edit\n" +
+                    "delete\n" +
+                    "quit");
+
+            System.out.print("\n-->");
+            String sc = scanner.nextLine();
+
+            if(sc.equalsIgnoreCase("add")){
+                addFunctionGroup(groupDAO);
+            }else if (sc.equalsIgnoreCase("edit")){
+                ediFtunctionGroup(groupDAO, groupIdList);
+            }else if (sc.equalsIgnoreCase("delete")){
+                deleteFunctionGroup(groupDAO, groupIdList);
+            }else if (sc.equalsIgnoreCase("quit")){
+                System.out.println("exit");
+                break;
+            }else{
+                System.out.println("WARNING: incorrect option, choose one more time");
+            }
+
+        }
+    }
+
+    private static void addFunctionGroup(GroupDAO groupDAO) {
+        String name = scannerString("name");
+        Group group = new Group(name);
+        groupDAO.create(group);
+        System.out.println("Group added");
+        System.out.println("-----------------------------");
+    }
+
+    private static void ediFtunctionGroup(GroupDAO groupDAO, ArrayList groupIdList) {
+        int groupId = scannerInt("group", groupIdList);
+        String name = scannerString("name");
+        Group group = new Group(name);
+        groupDAO.update(group, groupId);
+        System.out.println("Group updated");
+        System.out.println("-----------------------------");
+    }
+
+
+    private static void deleteFunctionGroup(GroupDAO groupDAO ,ArrayList groupIdList){
+        int groupId = scannerInt("group", groupIdList);
+        System.out.println("groupID "+groupId);
+        groupDAO.delete(groupId);
+        System.out.println("Group deleted");
+        System.out.println("-----------------------------");
+    }
+
+    private static void exerciseApp() {
+        ExcerciseDAO exerciseDAO = new ExcerciseDAO();
+        Scanner scanner= new Scanner(System.in);
+        while(true){
+            System.out.println("Exercise list:");
+            for (Exercise exercise: exerciseDAO.findAll()) {
+                System.out.println(exercise.toString());
+            }
+            //pobranie wszystkich exercise_id
+            ArrayList exerciseIdList = getExerciseId(exerciseDAO);
+
+            System.out.println("\nChoose one of the options below:");
+            System.out.println("add\n" +
+                    "edit\n" +
+                    "delete\n" +
+                    "quit");
+
+            System.out.print("\n-->");
+            String sc = scanner.nextLine();
+
+            if(sc.equalsIgnoreCase("add")){
+                addFunctionExercise(exerciseDAO);
+            }else if (sc.equalsIgnoreCase("edit")){
+                ediFtunctionExercise(exerciseDAO, exerciseIdList);
+            }else if (sc.equalsIgnoreCase("delete")){
+                deleteFunctionExercise(exerciseDAO, exerciseIdList);
+            }else if (sc.equalsIgnoreCase("quit")){
+                System.out.println("exit");
+                break;
+            }else{
+                System.out.println("WARNING: incorrect option, choose one more time");
+            }
+
+        }
+    }
+
+    private static void addFunctionExercise(ExcerciseDAO exerciseDAO) {
+        String title = scannerString("title");
+        String description = scannerString("description");
+
+        Exercise exercise = new Exercise(title, description);
+        exerciseDAO.create(exercise);
+        System.out.println("Exercise added");
+        System.out.println("-----------------------------");
+    }
+
+    private static void ediFtunctionExercise(ExcerciseDAO exerciseDAO, ArrayList exerciseIdList) {
+        int exerciseId = scannerInt("exercise", exerciseIdList);
+        String title = scannerString("title");
+        String description = scannerString("description");
+
+        Exercise exercise = new Exercise(title, description);
+        exerciseDAO.update(exercise, exerciseId);
+        System.out.println("Exercise updated");
+        System.out.println("-----------------------------");
+    }
+
+
+    private static void deleteFunctionExercise(ExcerciseDAO exerciseDAO ,ArrayList exerciseIdList){
+        int exerciseId = scannerInt("exercise", exerciseIdList);
+        System.out.println("exerciseID "+exerciseId);
+
+        exerciseDAO.delete(exerciseId);
+        System.out.println("Exercise deleted");
+        System.out.println("-----------------------------");
+    }
+
+    private static ArrayList getExerciseId(ExcerciseDAO exerciseDAO) {
+        ArrayList idList = new ArrayList();
+        for (Exercise exercise: exerciseDAO.findAll()) {
+            idList.add(exercise.getId());
+        }
+        return idList;
     }
 
     private static void userApp() {

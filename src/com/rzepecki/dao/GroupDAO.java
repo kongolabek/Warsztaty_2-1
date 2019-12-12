@@ -51,11 +51,11 @@ public class GroupDAO {
         return null;
     }
 
-    public void update(Group group) {
+    public void update(Group group, int id) {
         try {
             PreparedStatement statement = DbConnection.getConnection().prepareStatement(UPDATE_GROUP_QUERY);
             statement.setString(1, group.getName());
-            statement.setInt(2, group.getId());
+            statement.setInt(2, id);
             statement.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();

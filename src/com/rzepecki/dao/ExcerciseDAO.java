@@ -55,12 +55,12 @@ public class ExcerciseDAO {
         return null;
     }
 
-    public void update(Exercise exercise) {
+    public void update(Exercise exercise, int id) {
         try {
             PreparedStatement statement = DbConnection.getConnection().prepareStatement(UPDATE_EXERCISE_QUERY);
             statement.setString(1, exercise.getTitle());
             statement.setString(2, exercise.getDescription());
-            statement.setInt(3, exercise.getId());
+            statement.setInt(3, id);
             statement.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();

@@ -13,21 +13,22 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 public class SolutionDAO {
-    private static final String CREATE_SOLUTION_QUERY = "INSERT INTO solution(created, description , exercise_id, users_id) VALUES (?, ?, ?, ?)"; //na poczatku ustawia tylko created date
+    private static final String CREATE_SOLUTION_QUERY = "INSERT INTO solution(created, exercise_id, users_id) VALUES (?, ?, ?)"; //na poczatku ustawia tylko created date
     private static final String READ_SOLUTION_QUERY = "SELECT * FROM solution where id = ?";
-    private static final String UPDATE_SOLUTION_QUERY = "UPDATE solution SET updated = ?, description = ?, exercise_id = ?, users_id = ? where id = ?"; //brak mozliwosci zmiany daty utworzenia
+    private static final String UPDATE_SOLUTION_QUERY = "UPDATE solution SET updated=?, description = ? where exercise_id = ?"; //brak mozliwosci zmiany daty utworzenia
     private static final String DELETE_SOLUTION_QUERY = "DELETE FROM solution WHERE id = ?";
     private static final String FIND_ALL_SOLUTION_QUERY = "SELECT * FROM solution";
     private static final String FIND_ALLBYUSER_SOLUTION_QUERY = "SELECT * FROM solution where users_id= ?";
     private static final String FIND_ALLBYEXERCISE_SOLUTION_QUERY = "SELECT * FROM solution where exercise_id= ?";
+    private static final String FIND_EXERCISE_WITHOUT_SOLUTION_QUERY = "SELECT * FROM exercise JOIN solution s on exercise.id = s.exercise_id WHERE s.description is null and s.users_id = ?";
+
 
     public Solution create(Solution solution) {
         try {
             PreparedStatement statement = DbConnection.getConnection().prepareStatement(CREATE_SOLUTION_QUERY, Statement.RETURN_GENERATED_KEYS);
             statement.setDate(1, solution.getCreated());
-            statement.setString(2, solution.getDescription());
-            statement.setObject(3, solution.getExercise_id());
-            statement.setObject(4, solution.getUsers_id());
+            statement.setObject(2, solution.getExercise_id());
+            statement.setObject(3, solution.getUsers_id());
 
             statement.executeUpdate();
             ResultSet resultSet = statement.getGeneratedKeys();
@@ -53,7 +54,9 @@ public class SolutionDAO {
                 if (solution.getUpdated()!=null){
                     solution.setUpdated(resultSet.getTimestamp("updated").toLocalDateTime());
                 }
-                solution.setDescription(resultSet.getString("description"));
+                if (solution.getDescription()!=null){
+                    solution.setDescription(resultSet.getString("description"));
+                }
                 solution.setExercise_id(resultSet.getInt("exercise_id"));
                 solution.setUsers_id(resultSet.getInt("users_id"));
                 return solution;
@@ -64,15 +67,12 @@ public class SolutionDAO {
         return null;
     }
 
-    public void update(Solution solution) {
+    public void update(Solution solution, int exerciseID) {
         try {
             PreparedStatement statement = DbConnection.getConnection().prepareStatement(UPDATE_SOLUTION_QUERY);
-            solution.setUpdated(LocalDateTime.now());
             statement.setDate(1, solution.getUpdated());
             statement.setString(2, solution.getDescription());
-            statement.setObject(3, solution.getExercise_id());
-            statement.setObject(4, solution.getUsers_id());
-            statement.setInt(5, solution.getId());
+            statement.setInt(3, exerciseID);
             statement.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -98,8 +98,12 @@ public class SolutionDAO {
                 Solution solution = new Solution();
                 solution.setId(resultSet.getInt("id"));
                 solution.setCreated(resultSet.getTimestamp("created").toLocalDateTime());
-                solution.setUpdated(resultSet.getTimestamp("updated").toLocalDateTime());
-                solution.setDescription(resultSet.getString("description"));
+                if (solution.getUpdated()!=null){
+                    solution.setUpdated(resultSet.getTimestamp("updated").toLocalDateTime());
+                }
+                if (solution.getDescription()!=null){
+                    solution.setDescription(resultSet.getString("description"));
+                }
                 solution.setExercise_id(resultSet.getInt("exercise_id"));
                 solution.setUsers_id(resultSet.getInt("users_id"));
                 solutionsList.add(solution);
@@ -123,7 +127,9 @@ public class SolutionDAO {
                 if (solution.getUpdated()!=null){
                     solution.setUpdated(resultSet.getTimestamp("updated").toLocalDateTime());
                 }
-                solution.setDescription(resultSet.getString("description"));
+                if (solution.getDescription()!=null){
+                    solution.setDescription(resultSet.getString("description"));
+                }
                 solution.setExercise_id(resultSet.getInt("exercise_id"));
                 solution.setUsers_id(resultSet.getInt("users_id"));
                 solutionsList.add(solution);
@@ -148,7 +154,9 @@ public class SolutionDAO {
                 if (solution.getUpdated()!=null){
                     solution.setUpdated(resultSet.getTimestamp("updated").toLocalDateTime());
                 }
-                solution.setDescription(resultSet.getString("description"));
+                if (solution.getDescription()!=null){
+                    solution.setDescription(resultSet.getString("description"));
+                }
                 solution.setExercise_id(resultSet.getInt("exercise_id"));
                 solution.setUsers_id(resultSet.getInt("users_id"));
                 solutionsList.add(solution);
@@ -158,6 +166,25 @@ public class SolutionDAO {
             e.printStackTrace(); return null;
         }
 
+    }
+
+    public ArrayList<Exercise> findAllExerciseWithoutSolution(int userID){
+        try {
+            ArrayList<Exercise> exerciseList = new ArrayList<>();
+            PreparedStatement statement = DbConnection.getConnection().prepareStatement(FIND_EXERCISE_WITHOUT_SOLUTION_QUERY);
+            statement.setInt(1, userID);
+            ResultSet resultSet = statement.executeQuery();
+            while (resultSet.next()) {
+                Exercise exercise = new Exercise();
+                exercise.setId(resultSet.getInt("id"));
+                exercise.setTitle(resultSet.getString("title"));
+                exercise.setDescription(resultSet.getString("description"));
+                exerciseList.add(exercise);
+            }
+            return exerciseList;
+        } catch (SQLException e) {
+            e.printStackTrace(); return null;
+        }
     }
 
 

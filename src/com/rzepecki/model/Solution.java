@@ -16,11 +16,15 @@ public class Solution {
 
     public Solution() {}
 
-    public Solution(String description, int exercise_id, int users_id) {
+    public Solution(int exercise_id, int users_id) {
         this.created = LocalDateTime.now();
-        this.description = description;
         this.exercise_id = exercise_id;
         this.users_id = users_id;
+    }
+
+    public Solution(String description){
+        this.updated = LocalDateTime.now();
+        this.description = description;
     }
 
     /*
@@ -61,7 +65,6 @@ public class Solution {
     }
 
     public void setUpdated(LocalDateTime updated) {
-
         this.updated = updated;
     }
 
