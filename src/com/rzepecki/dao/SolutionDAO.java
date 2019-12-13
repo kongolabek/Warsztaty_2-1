@@ -51,12 +51,12 @@ public class SolutionDAO {
                 Solution solution =new Solution();
                 solution.setId(resultSet.getInt("id"));
                 solution.setCreated(resultSet.getTimestamp("created").toLocalDateTime());
-                if (solution.getUpdated()!=null){
+                try{
                     solution.setUpdated(resultSet.getTimestamp("updated").toLocalDateTime());
+                }catch (NullPointerException e){
+
                 }
-                if (solution.getDescription()!=null){
-                    solution.setDescription(resultSet.getString("description"));
-                }
+                solution.setDescription(resultSet.getString("description"));
                 solution.setExercise_id(resultSet.getInt("exercise_id"));
                 solution.setUsers_id(resultSet.getInt("users_id"));
                 return solution;
@@ -98,12 +98,12 @@ public class SolutionDAO {
                 Solution solution = new Solution();
                 solution.setId(resultSet.getInt("id"));
                 solution.setCreated(resultSet.getTimestamp("created").toLocalDateTime());
-                if (solution.getUpdated()!=null){
+                try{
                     solution.setUpdated(resultSet.getTimestamp("updated").toLocalDateTime());
+                }catch (NullPointerException e){
+
                 }
-                if (solution.getDescription()!=null){
-                    solution.setDescription(resultSet.getString("description"));
-                }
+                solution.setDescription(resultSet.getString("description"));
                 solution.setExercise_id(resultSet.getInt("exercise_id"));
                 solution.setUsers_id(resultSet.getInt("users_id"));
                 solutionsList.add(solution);
@@ -124,12 +124,12 @@ public class SolutionDAO {
                 Solution solution = new Solution();
                 solution.setId(resultSet.getInt("id"));
                 solution.setCreated(resultSet.getTimestamp("created").toLocalDateTime());
-                if (solution.getUpdated()!=null){
+                try{
                     solution.setUpdated(resultSet.getTimestamp("updated").toLocalDateTime());
+                }catch (NullPointerException e){
+
                 }
-                if (solution.getDescription()!=null){
-                    solution.setDescription(resultSet.getString("description"));
-                }
+                solution.setDescription(resultSet.getString("description"));
                 solution.setExercise_id(resultSet.getInt("exercise_id"));
                 solution.setUsers_id(resultSet.getInt("users_id"));
                 solutionsList.add(solution);
@@ -151,12 +151,12 @@ public class SolutionDAO {
                 Solution solution = new Solution();
                 solution.setId(resultSet.getInt("id"));
                 solution.setCreated(resultSet.getTimestamp("created").toLocalDateTime());
-                if (solution.getUpdated()!=null){
+                try{
                     solution.setUpdated(resultSet.getTimestamp("updated").toLocalDateTime());
+                }catch (NullPointerException e){
+
                 }
-                if (solution.getDescription()!=null){
-                    solution.setDescription(resultSet.getString("description"));
-                }
+                solution.setDescription(resultSet.getString("description"));
                 solution.setExercise_id(resultSet.getInt("exercise_id"));
                 solution.setUsers_id(resultSet.getInt("users_id"));
                 solutionsList.add(solution);
